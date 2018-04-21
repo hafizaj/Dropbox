@@ -1,0 +1,84 @@
+CS Lecture 5 Destructors and Constructors
+
+
+Steps of Construction:
+
+1.	------
+2.	Construct the data members , consulting the member initialization list
+3.	Execute the body of the constructor
+
+Steps of destruction: (The reverse order of construction)
+
+1.	Execute the body of the destructor
+2.	Destroy the data members:
+		* for members of a class type, call the destructor for that type.
+		* for builtin types, do noting
+3.	------
+
+
+=========
+
+If you don't declare a destructor, the compiler writes one for you.
+How the compiler's destructor looks like (ALWAYS)
+
+		String::~String()
+		{}
+
+Executing the default destructor does nothing. L
+
+C++ requires you to distinguish something you allocate as a single object and something you allocate as an array
+
+deleting a single objecc:
+
+	p = new Flatulan(...)
+	delete p;
+
+deleting an array:
+	
+	q = new int[n];
+	delete [] q;
+
+Note:
+
+If you use the wrong form, it will lead to undefined behaviour.
+
+If you use single object on array, it will only destroy the first element of the array
+
+Copy constructor
+===============
+How to construct an object of another type of the same type
+
+If you don't decalre how to create 
+
+The one that compiler writes for you goes through these steps of construction.
+The way it constructs the data members is by simply copying them from the source.
+TL;DR : Compiler copy constructor will just copy everything
+
+
+Creating a copy constructor :: What it means to copy a string?
+===========================
+
+class String
+{
+	public:
+		String(const char* value = "" );
+		~String();
+		String(const String& other); // pass by constant reference.
+
+}
+
+Implementing a copy constructor
+===============================
+
+String::String(const String& other)
+{
+	m_len = other.m_len;
+	m_text = new char[m_len+1];
+	strcpy(m_text, other.m_text);	//strcpy(source, destination)
+}
+
+copy constructor is a member function of the class.
+you can only access 
+
+Question: How did we get away for so long without writing a copy constructor?
+

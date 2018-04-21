@@ -1,0 +1,153 @@
+CS Lecture 4 Resource Management
+
+Assume cstlib is not available
+-- no string class available.
+
+We can use CStrings
+-- strlen
+-- strcat
+
+void h()
+{
+	String s("Hello");
+	...
+}
+
+int main()
+{
+	String t;
+	for (...)
+		h();
+	...
+}
+
+class String
+{
+	public:
+	String(const char value[]) 
+
+	private:
+		char m_string*;
+}
+
+Refreshing Cstrings
+1. Null-terminated array of char
+	"Hello" --> [ H | e | l | l | o | \0 ] 
+
+2. You actually just pass in a pointer to where the array starts, not the whole array itself
+	
+	String (const char value[]) 
+	String (const char* value)
+
+3. If we declare an array with a fixed sized ( the language syntax requires that we know the size of the array at compile time) 
+	Problem:
+	1. Array can be too short.
+		a. Causing problems to fit in longer strings, will partition longer strings into segments
+	2. Array can be too big.
+		a. Causing memory wastage.
+			- Each string is 100000 bytes long, but we only use a few
+			-
+
+====
+
+How to represent the string "Hello" ?
+
+H e l l \0 _ _ _ _ _ 
+Problem:
+char m_text[...] ; if we declare an array with a fixed sized ( the language syntax requires that we know the size of the array at compile time) ;
+
+The problem with this implementation is that if we run into problem 3.
+
+Overcoming this problem:
+Implement a pointer to a dynamically-allocated variable in the heap.
+
+
+
+A lot of the operations with string requires us to know how long the string is.
+
+1. One possible representation.
+
+Data members:
+	Option 1: Zero-byte terminated
+	1. String ['H', 'e', 'l','l','o','\0']
+	   Length of string
+	2. 5
+	Note: We chose this one
+
+	Option 2: Not terminated by zero-byte
+	1. String ['H', 'e', 'l','l','o']
+	2. 5
+
+
+class String
+{
+	public:
+		String(const char* value);
+		String();
+
+	private:
+		//class invariant properties:
+		//Looking at m_text member.
+			Conditions for m_len: 
+			=====================
+			Points to an array of chars that is one more than the length member ( index + 1)
+			m_len can't be negative
+			m_len can't be zero m>=0
+			m_text[m_len] == '\0'
+
+
+			Conditions for String:
+			======================
+			For the empty string, it just points to the zero byte
+			For the case of empty string, it is just an array of one element, being the null character '\0'
+}
+
+For something like an empty string, it still uses some amount of storage:
+I might very well have a lot of empty strings, and this will definitely waste strogae.
+
+Ex:
+String sa[1000000];
+An array of an object class type will initialize with the default constructor : the default constructor will be called for each of the element of the array.
+
+
+Problems:
+1. Cost of allocating storage : several memories.
+2. Bookeeping information uses storage.
+
+
+Empty string.	vs	nullptr
+0					0
+
+Nullptr is more efficient.
+Every string to an empty stirng has a dynamically allocated function.
+But nullptr is a speical case
+
+empty string as "" is just as any other string, hence we can use strlen , strcat
+but if we declare empty string as nullptr, we cannot use the existing member functions as this is a special case.
+
+If we use an implementation that is a special case, we have to make exceptions for the other member functions.
+In addition, we have to update the class invariant.
+
+...
+	private:
+		// Class invariant
+		// Either
+		//		m_text ppints to an array of m_len+1 chars
+		//		m_len >0
+		// 		m_text[m_len] == '\0'
+		// OR
+		// 		m_text == nullptr
+		// 		m_len == 0;
+
+Now, we choose
+
+\0 will cause time and memory penalty
+nullptr will be harder to implement
+
+Should i make my life easier at the expense of runtime.
+	- This implementation
+	-
+
+If i say few hours of my time, we may cause days and time of other people's time to overcome the physical limitation
+If i go with the nullptr implementation
+The purpose of explaining the resource management issues, i am going to choose with the \0 as empty string.

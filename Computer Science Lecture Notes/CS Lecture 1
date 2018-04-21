@@ -1,0 +1,247 @@
+CS32 Lecture 1
+
+Data Structures
+
+Wed April 25 5:15pm- 6.20pm or 6pm-7.05pm
+Wed May 23
+Final
+Sat June 9 ; 11.30am - 2.30pm
+
+Develop incrementally
+
+Break the project by parts, then increment the development.
+--Read what we write.
+--Follow the spelling requirements for the scorer to grader.
+--The specs going to be huge af.
+
+
+Capital letters matter bruh.
+
+Departing from: Los Angeles
+Arriving at:    New York
+
+
+---This is Wrong Because Capitalization of Words are Wrong--
+Departing From: Los Angeles
+Arriving At:    New York
+
+
+2^10 = 1024
+2^20 = 1024000
+
+
+Friday:
+
+Friday, April 6 will be a lecture day at the time of your discussion.
+Friday will be normal lecture.
+
+
+Seperating 
+interface 				vs. 	implementation
+"what it does" 					"how"
+
+
+
+To make it so that manage the complexity of a large program by not worrying how individual classes are done.
+
+The right order.
+How you want to use circle, then worry about the code .
+
+
+
+
+--circle.cpp--
+
+#include <stdexcept>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+Class Circle
+{
+	public: // a class is a struct, a struct is a class
+
+		Circle(); //empty constructor
+		Circle(double x,double y, double r); // designated constructor
+
+		void scale(double factor);
+		void draw(); //a member function
+		//not every function that deals with circle object is a member function
+		friend std::ostream operator<<(std::ostream inputText);
+
+
+	private:
+
+		//private datamembers: only member functions of the Circle class can access the private datamembers.
+		double m_x;
+		double m_y;
+		double m_r;
+
+		//setting constaints for the data members.
+
+			//class invariant
+			//	m_r > 0; hmm, what happens if it is zero? (hint : zero not allowed)
+			//then there will be infinitely many tangents through the point
+
+
+		//properties that represent a circle is considered to be in an invalid state.
+		//if you can ensure that your
+
+
+};
+
+
+void Circle::scale(double factor)
+{
+	m_r = factor*(m_r);
+}
+
+//Empty constructor
+Circle::Circle()
+{
+	m_x=0;
+	m_y=0;
+	m_r=0;
+}
+
+
+
+
+//Constructor initialization.
+Circle::Circle(double x, double y, double z)
+{
+	m_x = x;
+	m_y = y;
+	m_z = z;
+}
+
+void Circle::draw()
+{
+	
+}
+
+double area(Circle c); // declaration
+
+
+int main()
+{
+	Circle c(-2,5,7); // you want constructors to define how big it is, where it is, coordinate system
+	//you wanna scale the circle by a factor
+	c.scale(2);
+	c.draw();
+	cout << area(c) << endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//specifying something by reference point.
+
+Notes:
+1. The only difference between struct and class is
+	Struct is by default public.
+
+	struct Struct_Name
+	{
+	//everything within the curly brace is public by default.
+	};
+	Class is by default private.
+
+	class Class_Name
+	{
+
+	};
+
+
+2. What are linker errors?
+	
+	Source code. 
+	e.g. Blah.cpp
+	gets translated into an executable program.
+	its done in more than one step.
+	1.	C++ source code. // compiler
+	2.	cpp gets built into an object file .o (linux) or .obj (windows/mac).  // library needs to be defined in the object file. //linker
+	3.	a list of what it needs to be a complete executable program.
+	4.	links the object file and the requiremenrs in the library
+
+	Erros from the linker tend to have :
+	1) some needs have not been met.
+	2) you declared a prototype for a function but no implementation.
+	3) you declared a function but no body ?
+	--> Produces error such as undefined symbol.
+	--> You can have functions of the same name (function overloading)
+
+	you cant implement two functions of the same type
+
+	ex
+	int test();
+	int test(); --> Which are illegal.
+
+
+	Mistakes.
+
+	Theres two function of name main.
+
+
+3. What are libraries?
+	
+	cin, cout, sin, cos, getline -- all contained in the library.
+
+
+4. Setting constraints on your data members !
+	Year : 2018
+	Month: April
+	Day:   2
+
+	if you dont think explicitly.
+	if you dont write down a check, it will be overwritten into a bad state form a good state.
+
+	m_x, m_y has no constraints.
+	--> should the screen size be relevant?
+	--> should i want to limit so that the entire circle should be on screen?
+	--> can the circle be partially seen on the output display?
+
+	thinking about this makes you think about the special cases. 
+	the exceptional cases, what might go wrong,
+
+
+	--> What if the circle is too big that it does not appear on the screen.
+
+
+
+	m_r
+	radius better NOT be negative !
+
+	document these constraints
+
+
+5. Any time you make a directional operator, ask :
+
+		Am i doing the right thing when it is equal?
+		Ask yourself about the equal case when youre handling cases?
+
+6. Why data members should be private?
+	Then the class invariant will be trivial.
+	Anyone can just change the data members to a completely illegal values.
+
+	Hence, you need a member function to regulate the value that the data members are changed into.
+
+7. What happens when 
+	Circle::Circle(double x, double y, double r)
+	{
+		x = x; declaration of a local variable takes precedence over existing private data members, hence what this will do is that it will assign the x that is passed into the function
+		and assigns to itself.
+	}

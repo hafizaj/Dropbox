@@ -1,0 +1,187 @@
+CS Lecture 4
+
+Compiler always have 3 steps:
+
+1. ----------
+2. Construct the data members, consulting the member initialization list as a guidance to how to construct.
+	if a member is not listed.
+	* if its a build in type (primitive), it is left uninitialized.
+	* if it's of a class type, it is default constructed : error if there is no default constructor
+	  -- such as logic_error, ... , throw class objects
+3. Execute the body of the constructor
+
+Strings are object of the string class.
+strings have data member functions.
+
+sf.
+
+m_bodylength
+
+
+m_name
+
+m_head
+	m_x
+	m_y
+	m_R
+
+Stickfigure(5,4,"Fred",-2,7)
+
+Question: How does the stick figure constructor does the job to implement the function?
+
+
+
+How to fix this
+
+// Wrong way
+
+StickFigure::StickFigure(double bl, double headDiam, string nm : m_x(hx), m_y(hy) , m_r(headDiam/2)) Wrong !!!!!!!!
+
+m_x, m_y, and m_r are PRIVATE DATAMEMBERS of Circle class.
+But it doesn't mean that it has free unfettered access to Class private data members. It is encased and protected by the circle private functions.
+
+
+To correctly do this:
+
+StickFigure:;StickFigure( double bl, double headDiam, string nm, double hx, double hy) : m_head(hx, hy, headDiam/2) // this consults the Circle's initialization list.
+{
+	m_bodyLength = bl;
+	m_name = nm; //why not we just built it with right value to begin with?
+}
+
+Augmented version:
+
+StickFigure:;StickFigure( double bl, double headDiam, string nm, double hx, double hy) : m_bodyLength(bl) , m_name(nm), m_head(hx, hy, headDiam/2) 
+{
+	if (bl <=0)
+		throw std::logic_error("Body Length Negative");
+
+}
+
+
+Circle::Cirlce(double x, double y, double r) : m_x(x), m_y(y), m_r(r)
+{
+	if (r <= 0)
+		......
+}
+
+Notes:
+
+1. If you dont declare a constructor with no arguments, the class has NO defautl constructor.
+2. Don't do wasted work. In step 2 of construction, why bother setting the defautl value of primitive data members to a wrong value only to then fix it to the right value we wanted to in step 3?
+
+3. If you can initialize a data member in the initialization list instead of the body of the constructor, do that !
+   If it requires computation, that leave it in the body of the constructor.
+
+struct Employee
+{
+	string name;
+	double salary;
+	int age;
+};
+
+Employee e;
+
+==== e ====
+name : garbage values
+salary :
+age
+
+
+Rules to analyse this:
+
+1. Class is a struct
+   We can rewrite this code is:
+
+   class Employee
+   {
+   public:
+   	....
+   }
+
+ 2. Since we never wrote a constructor for us, the compiler will write a constructor for us.
+ Default constructor of compiler.
+
+ Employee::Employee()
+ {
+ }
+
+3. Conceptually, string will be initialized as empty.
+	Salary and age are primitive data types, they will be left as garbage values.
+
+
+#include "Foo.h" vs class Foo;
+==================================	
+Using "Foo.h"
+-- If you declare a variable or a data member of type foo, the compiler must know how big a Foo object is.
+-- If you call a member function of Foo, the compiler must have seen a defintion of the Foo Class.
+Using class Foo;
+-- If you decalre a Foo pointer or a Foo reference, all the compiler needs to know is that Foo is the name of a type.
+
+The disadvantage of including the header file.
+
+1. Any code that requires header file needs to be recompiled when the Foo.cpp is changed, hence it will take time to recompile the whole thing.
+
+If we had simply named the class Foo;
+
+if you have a program that only uses class Foo; you wont have to do recompilation of files as opposed to #include "Foo.h"
+
+
+
+Circular Dependency
+===================
+Example:
+
+class A
+{
+	int m_i;
+	B m_b;
+}
+
+class B
+{
+	A m_a;
+}
+
+What this looks like:
+	System of equations:
+
+		size of A = 4 + size of B
+		size of B = size of A
+
+		size of A = 4 + size of A
+
+		this is infinity.
+
+
+Efficiency
+==========
+In the city member functions from project 1,
+
+	m_flatulans[] = new Flatulan(...);
+
+Not deleting a new variable each time we are done using it will lead to accumulation, resulting in a heap overflow .
+
+Resource management : Properly releasing the block of memory once we don't want to use it anymore.
+
+delete is the way to release the storage.
+
+Every time we open a file in the program, what has to open internally, there some kind of file descriptor ... how far we have read into it,
+Every operating system has a limit of how many file descriptor we can open at one time.
+
+Example:
+Open file
+Process it
+Close it
+
+Hence, at any time, 
+
+-- Creating an input filestream object, output closes it.
+-- How many open network connections you have.
+
+
+ATM Lock Mechanism
+Classic Problem you want to avoid : resource leak.
+
+1. Acquires a resource, when it no longer needs it, forgets to return the resource again.
+2. Consuming a resource without releasing it, eventually causes problems to the operating system.

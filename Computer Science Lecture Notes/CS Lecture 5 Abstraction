@@ -1,0 +1,353 @@
+CS Lecture 5 Abstraction
+
+Abstract Data Type (ADT)
+Specifying the public interface.
+What member functions do you have attached to it.
+We can program with this type.
+Later on if they want to change the implementaion.
+
+#include <cstring>
+strlen
+strcpy
+strcmp
+strcat
+
+void h()
+{
+	string s("hello");
+	...
+}
+
+Dont have to tell you how to do it.
+Tell you about the type double.
+I don't want to tell you how it is represente.
+Abstract the type, and not worry about it's implementation.
+
+===== Previous lecture ======
+
+1. Dynamic arrays : pointer to a data
+2. String hello would be reresented this way
+	Array of char that is null terminated.
+3. How to implement the empty string ?
+	1. Null character.
+	2. Null pointer.
+		-- > Better choice because doesn't use up much memory.
+
+class String
+{
+	public:
+		string(const char* value)
+		String();
+
+	private:
+			//Class invariant
+			//	m_text ppints to a dynamically allocated array of m_len+1 chars
+			//	m_len >0
+			//	m_text[m_len] == '\0'
+		char* m_text;
+		int m_len;
+}
+
+String::String(const char* value)
+
+{
+	m_len = strlen(value);	//cstd library will find how long the string is
+	m_text = value;
+}
+
+value parameter will hold the pointer to the array of char.
+
+
+char buffer[100];
+cin.getline(buffer,100);	// stores in the first argument untill 100 characters including the /0 byte
+String a(buffer);
+cin.getline(buffer,100); // 
+
+
+--- user inputs hello
+buffer (array) is =. H e l l o /0
+String a (buffer); passes a pointer to the array buffer.
+
+but if we do the 
+cin.getline(buffer,100) with wow, it will change the element of the array a.
+
+When i'm the with the constructor, i want a pointer to the string hello, but not a pointer to value.
+
+String::String(const char* value)
+{
+	m_len = strlen(value);
+	m_text = 
+}
+
+1. Problem that arises.
+	If we declare a new array in the constructor, it will only be a local array.
+	Hence we will only return a pointer to an array that will be deleted after the constructor's life end.
+
+
+How to overcome the problem?
+Dynamically allocate the arrays
+
+String::String(const char* value)
+{
+	m_len = strlen(value);
+	m_text = new char[m_len+1]; //we initialize an array of char with an extra space for nullbyte
+	strcpy(m_text,value);	// copies the character until it copies the zerobyte until it stops.
+}
+
+String::String()	//	default constructor :: for a parameterless 
+{
+	m_len = 0;
+	m_text = new char[1];
+	m_text[0] = '\0';
+}
+
+==	Function overloading
+==	in a situation that takes in arguments such as
+
+void f(int a , double b, string c)
+void f(int a)
+
+if we examine the implementation of the second function (which is totally the same as the first one)
+
+void f(int a, double d=17, string = "")	// default parameters which is required to be clumped at the end of the parameter decaration.
+
+hence, both
+
+f(42, 685, "Hello");
+f(27);
+f(16,3.14)	// compiler will pro
+
+the functions will compile with three argument, just that the compiler will provide if we don't provide into the compiler.
+
+If you're going to create a function with same name , same implementation.
+
+
+=====
+
+Relating to the concept
+
+
+String::String(const char* value)
+{
+	m_len = strlen(value);
+	m_text = new char[m_len+1]; //we initialize an array of char with an extra space for nullbyte
+	strcpy(m_text,value);	// copies the character until it copies the zerobyte until it stops.
+}
+
+String::String()	//	default constructor :: for a parameterless 
+{
+	m_len = 0;
+	m_text = new char[1];
+	m_text[0] = '\0';
+}
+
+Notice how m_len = strlen("");
+		   new char[m_len + 1];
+		   strcpy(m_text,	""); //it will copies all characters up to and including the zero byte. Hence, only the zero byte will be copied to the m_text array
+
+Hence, we don't need a seperate constructor for string 
+
+String will always be called even when no arguments are passed in.
+
+class String
+{
+	public:
+		String(const char* value = "" );
+		//	String(); We no longer require this second constructor because we treat the value passes in when no argument in passed in as an empty string.
+
+	private:
+			//Class invariant
+			//	m_text ppints to a dynamically allocated array of m_len+1 chars
+			//	m_len >0
+			//	m_text[m_len] == '\0'
+		char* m_text;
+		int m_len;
+}
+
+Warning:
+
+If we want to leave an argument , we have to leave them at the end of the function.
+Once we supply a default value for parameter, all following arguments must be default.
+
+The rule in the syntax: 
+Once you start supplying default values, all subsequent argument must me supplied with default values.
+
+
+=========
+
+Strlen : Is there a pointer that that will cause a problem.
+if you pass in nullptr into strlen it will result in undefined behaviour.
+
+We document our string type.
+If we pass in nullptr to string, it will lead to undefined behavior
+
+=== Checking for undefined behaviour
+
+String::String(const char* value)
+{	
+	if ( value == nullptr)
+	{
+		value = "" ;	//chaning the pointer to an empty stirng allocated at someplace in the stack.
+	}
+
+
+	m_len = strlen(value);
+	m_text = new char[m_len+1]; 
+	strcpy(m_text,value);	
+}
+
+if someone tries to pass in nullptr, we can assume that the peson wants to create an empty string (which is a reasonable assumption)
+
+IMPORTANT NOTE:
+
+const char* value means that the characters that the pointer is pointing to CANNOT be modified, but the POINTER itself can be moved.
+
+what const actually mean : We cannot FOLLOW THE POINTER AND CHANGE ANY OF THE ELEMENT OF CHAR AT THE LOCATION OF THE POINTER.
+
+
+=========
+
+
+Steps of Construction:
+
+1.	------
+2.	Construct the data members , consulting the member initialization list
+3.	Execute the body of the constructor
+
+Steps of destruction: (The reverse order of construction)
+
+1.	Execute the body of the destructor
+2.	Destroy the data members:
+		* for members of a class type, call the destructor for that type.
+		* for builtin types, do noting
+3.	------
+
+
+=========
+
+If you don't declare a destructor, the compiler writes one for you.
+How the compiler's destructor looks like (ALWAYS)
+
+String::~String()
+{}
+
+The storage of the new pointer is NOT deleted.
+There will be memory leak.
+
+While this may be trivial memory loss, imagine if the function is invoked multiple times.
+
+if you acquire resource, GIVE IT BACC
+
+String::~Stirng()
+{
+	delete [] m_text;	// deleting an array pointer.
+	once we call delete the storage
+	//you're never going to use the pointer again, so why bother setting it to the nullptr?
+	//hence just leave it as it is.
+}
+
+
+=========
+
+void f(String t)
+{
+	
+}
+
+void g()
+{
+	String s("Hello");
+	f(s); passing a string itself, not a pointer to a string. Passing by value implies copying.
+	It will initialize by copying s in to t.
+	But we didn't say how to copy one String to another.
+	t is going to another string.
+
+}
+
+When f finishes.
+The parameter f is going to be destroyed.
+The string destructor will destroy hello
+
+s is pointing to nothing.
+s has a dangling pointer
+we let the compiler write the copy constructor for us when it is doing the wrong thing
+
+
+Why is this a new problem?
+==========================
+
+We were using primitive data types, hence if it is copied.
+Because of something it contains requires us to write a destructor, IT IS ALMOST ALWAYS require us to write a copy constructor
+
+What does it need to copy that resource?
+We're going to copy the string and not let the new string (that copies from the source) TO NOT POINT AT THE pointer of the source. 
+--- Usually the source is passes in as argument, which will be destroyed once the scope of the function ends, causing memory in the address to deleted
+
+
+class String
+{
+	public:
+		String(const char* value = "" );
+		~String();
+		String(String other) // Wrong!
+}
+
+
+We will contruct t by constructing a string called other
+
+The copy constructor's argument is PASSED BY CONSTANT REFERENCE
+
+Next problem:
+=============
+
+Implementing a copy constructor
+===============================
+String::String(const String& other)
+{
+	m_len = other.m_len;
+	m_text = other.m_text;// wrong, because it will return a pointer to the same address lmao.
+}
+
+To fix this:
+============
+String::String(const String& other)
+{
+	m_len = other.m_len;
+	m_text = new char[m_len+1];
+	strcpy(m_text, other.m_text);	//strcpy(source, destination)
+}
+
+//when f returns local variable t is gone, s is unharmed.
+
+
+Question: How did we get away for so long without writing a copy constructor?
+
+Employee::~Employee(){}
+
+Step 1 : Body of the destructor : Do nothing
+Step 2 : Destroy member functions.
+		For class types, it will call the destructor for the class. // The destructor for string does the right thing.
+
+We never had to worry because we never had to build a raw pointer to an object.
+We don't have to worry about dynamic memory.
+
+
+We pass an employee by value.
+
+We did not write a copy constuctor : It will copy the built in types.
+How about copying the compielr string ? It will use the copy constructor of string in the standart library which does the right thing.
+Dynamically allocate a new arraw and copy the text.
+
+===========
+
+void f(String t)
+{
+	String u('Hello');
+	...
+	u = t; //assignment statement // u has already been constructed. u is an existing object and we're giving it a new value.
+	friend String operator=()...
+	Assignment operator IS NOT a copy 
+	...
+
+
+}

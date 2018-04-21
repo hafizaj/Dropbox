@@ -1,0 +1,140 @@
+CS32 Lecture 2
+
+using namespace std;
+#include <stdexcept>
+#include <cstdlib> //standat error library
+
+
+class Circle{
+	
+	public:
+		Circle(double x, double y, double r);
+		bool scale(double factor);
+		void draw() const;
+		double radius() const;
+
+
+
+
+	private:
+			//class invariant
+			//m_r > 0
+		double m_x;
+		double m_y;
+		doub;e m_r;
+
+
+
+
+
+};
+
+double area(Circle w) const;
+
+Circle::Circle(double x, double y, double r);
+{
+	//verify that the constructor creates an object that is valid
+	//condition: r>0
+	//if the caller calls a circle with a non-positive radius,
+
+	if (r<=0)
+	{
+		//must not return a normal output.
+		//because it is tedious to check every single circle if it is valid or not.
+		//if it returns true if it can do its jobs.
+
+		//hence, to handle constructor sthat cannot do the job, we can throw an object of any error type we want.
+		throw std::logic_error("Radius must be postive."); //throw-catch block
+
+
+		cerr << "Cannot construct a circle with a non-positive radius"
+			 << r << endl;
+
+		exit(1);
+
+		//0 is chosen as the number if a program succeeds.
+		//other numbers can be used signify different error(?)
+
+	}
+
+	m_x = x;
+	m_y = y;
+	m_r = r;
+}
+
+void Circle::scale(double factor)
+{
+	//assume that you put in a valid(positive circle)
+	//if factor is non-positive, the new circle is generated is invalid
+
+	if (factor <=0)
+	{
+		throw std::logic_error("Factor is non-positive");
+
+	}
+}
+
+bool Circle::scale(double factor)
+{
+	//but the function doesnt return an initialized bool? 
+	if (factor<=0)
+		return false;
+	m_r *= factor;
+	return true;
+
+}
+
+
+void Circle::draw()
+{
+	... draw a circle centered at (m_X,m_y) with radius m_r.....
+}
+
+double area(const Circle& w) //the caller of the area of the area function is guaranteed to not be modified.
+{
+	return 3.14159 * w.radius() * w.radius();
+}
+
+double Circle::radius() const
+{
+	return m_r;
+}
+
+
+Notes:
+
+1. Satisfies the invariant
+	Dont leave it in an invalid state.
+	So that you dont get into trouble.
+
+
+2. Common mistake that people make during bool functions.
+
+
+bool Circle::scale(double factor)
+{
+	//but the function doesnt return an initialized bool? 
+	if (factor<=0)
+		return false;
+	m_r *= factor;
+
+}
+
+3. Passing by constant reference tells the compiler to check that the function itself does not modify ANYTHING.
+
+the compiler is not allowed to look at the implementation of a function call to check if it is legal or not.
+
+only the file being currently compiled will be looked at/
+
+there needs to be a way to mark the radius() function to communicate to the compiler that it will NOT change anything.
+
+we can look at the declaration.
+
+// Ask yourself if the function changes anything in the function or not.
+// Mark anything that is not changed constant.
+
+constructors are not allowed to be const.
+ask
+1.	Can it change the state of the object?
+2.	Does drawing changes the data members of the circle.
+		No, hence, mark it constant.

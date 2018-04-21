@@ -1,0 +1,179 @@
+CS32 Lecture 6 (Assignment Issues)
+
+Passing by value means copying 
+void f(Sting t) // t is a brand new copy of t.
+{
+	
+}
+
+void g()
+{
+	String s("Hello");
+	f(S);
+}
+
+if an object directly holds a resource, then almost surely you are needing to write a desturctor and the na copy consturctor.
+
+
+String:;String(const &String copy); // passing by reference -- takes a data member that is taking a string and copy a stirng. 
+copy constructor defines what it means to pass by refrence.
+
+String:;String(const &String copy)
+{
+	m_len = other.m_len;
+	m_text = new char[m_len+1];
+	strcpy(m_text, other.m_text); 
+}
+
+The only place you can talk about a private data member is in a member function of a class.
+
+
+Assignment
+==========
+//Assume u was previously defined.
+String t("Cibai");
+u = t;
+Yes we wrote the copy constructor, but this is not copy constructor dependent.
+
+What copy constructor looks like:
+Blah b;
+Blah b2(b);
+This is initialization : Done by construction.
+
+This requires assignment operator:
+This is not a declaraiton
+Takes an existing object and assigning it
+
+b2 = b; // This is assignment
+
+We are not taking a new object and giving it a default value, this is taking an existing object and then assigning it to something.
+
+
+Default Assignment Operator || Members of the builtin type will be assigned normally.
+
+
+The default operator= casues both the object to point to the same area.
+When U gets away, the destructor will delete the exisitng area.
+
+Aliasing Considered.
+Checking if the 2 objects are the same object or not.
+
+
+String& String::operator=(const String& rhs) 
+{
+	if (this != &rhs)
+	{
+		delete [] m_text;
+		m_len = rhs.m_len;
+		m_text = new char[m_len + 1];
+		strcpy(m_text, rhs.m_text);
+	}
+	return *this;
+}
+
+Just getting the syntax of getting of destructor will get it wrong.
+Dont try to rearrange part of the work even though it is very similar.
+
+IF a function can't do it's job, you dont want to leave the object in a corrupted state.
+It should not be in a weird out of state.
+Example
+=======
+Recognise that this is how old-school method to write assignment operator.
+
+
+Cause of the problem
+====================
+We deleted "WOW\0" before we knew we can get stored in memory.
+Rearrange :
+1.	Check the memory limits first before we can delete the original character:
+	A popular model to do this:
+	Member function so that we hae access to the private members.
+	// Swapping
+		Create a temporary holder local variable string to copy one of the string objects.
+		I can swap these 2 strings without creating a third string if i have access to the private data members.
+		I don't need to do allocation or deallocation (because allocation can throw in an exception)
+		Just exchange the pointers and exchange the integers.
+
+String& String::operator=(const String& rhs) 
+{
+	if (this != &rhs)
+	{
+		String temp(rhs); //local varaibles go away when we throw an exception
+		//if a function cant do its job, the functions leaves the variables alone,and throw and exception
+		//if making a copy does work, then we have our copy of t
+		this.swap(temp);
+		When local varaibles get called, it invokes the destructor.
+		the local variable temp gets deleted.
+
+	}
+	return *this;
+}
+
+
+this - > u
+		 * - > W o w \0
+		 3
+
+Implementation of assignment operator
+Short and simple
+Uses copy and swap approach
+
+String& String::operator(const String& rhs) "copy and swap"
+{
+	if (this != &rhs)
+	{
+		String temp(rhs);
+		swap(temp);
+	}
+	return *this
+}
+
+=====================
+Problems when we don't consider aliasing.
+
+
+void transfer(Account& from,Account& to, double amt)
+{
+	from.debit(amt);
+	to.credit(amt);
+	if(amt >= 10000)
+		fileForm();
+	
+}
+
+
+void fire(Ship& from, Ship& to);
+this ship has to get from here to here.
+
+Examining any aliasing situation can help us find loopholes.
+Often overlookd by people.
+=======================
+
+How to make a collection of array of items
+One representation of fixed capaciy array:
+--------------------------------------
+Blah ba[100];
+array might be too small
+fixed size array has the limitation of size.
+
+Problem 3 is a fixed sized array implementaion
+
+
+Dynamically allocated array:
+============================
+One representation of a dynamically allocated fixed capacity array
+------------------------------------------------------------------
+Blah* bp;
+bp = new Blah[n]; //n can be large or small (what our capacity ougtha be)
+we now have apointer to an object.
+n were 500
+
+Note: If we somehow wanted to increase the limit of this array, we cant.
+
+Resizable array
+---------------
+Capacity we initialized it with can be changed throughout the program.
+bp -->
+
+
+===========================

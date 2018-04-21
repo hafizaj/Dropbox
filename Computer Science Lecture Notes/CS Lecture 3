@@ -1,0 +1,543 @@
+CS32 Lecture 3
+
+using namespace std;
+#include <stdexcept>
+#include <cstdlib> //standat error library
+
+
+class Circle{
+	
+	public:
+		Circle(double x, double y, double r);
+		bool scale(double factor);
+		void draw() const;
+		double radius() const;
+
+
+
+
+	private:
+			//class invariant
+			//m_r > 0
+		double m_x;
+		double m_y;
+		doub;e m_r;
+
+
+
+
+
+};
+
+double area(Circle w) const;
+
+Circle::Circle(double x, double y, double r);
+{
+	//verify that the constructor creates an object that is valid
+	//condition: r>0
+	//if the caller calls a circle with a non-positive radius,
+
+	if (r<=0)
+	{
+		//must not return a normal output.
+		//because it is tedious to check every single circle if it is valid or not.
+		//if it returns true if it can do its jobs.
+
+		//hence, to handle constructor sthat cannot do the job, we can throw an object of any error type we want.
+		throw std::logic_error("Radius must be postive."); //throw-catch block
+
+
+		cerr << "Cannot construct a circle with a non-positive radius"
+			 << r << endl;
+
+		exit(1);
+
+		//0 is chosen as the number if a program succeeds.
+		//other numbers can be used signify different error(?)
+
+	}
+
+	m_x = x;
+	m_y = y;
+	m_r = r;
+}
+
+void Circle::scale(double factor)
+{
+	//assume that you put in a valid(positive circle)
+	//if factor is non-positive, the new circle is generated is invalid
+
+	if (factor <=0)
+	{
+		throw std::logic_error("Factor is non-positive");
+
+	}
+}
+
+bool Circle::scale(double factor)
+{
+	//but the function doesnt return an initialized bool? 
+	if (factor<=0)
+		return false;
+	m_r *= factor;
+	return true;
+
+}
+
+
+void Circle::draw()
+{
+	... draw a circle centered at (m_X,m_y) with radius m_r.....
+}
+
+double area(const Circle& w) //the caller of the area of the area function is guaranteed to not be modified.
+{
+	return 3.14159 * w.radius() * w.radius();
+}
+
+double Circle::radius() const
+{
+	return m_r;
+}
+
+
+1. Declaring a universal constant
+
+	#include <cmath>
+	.
+	.
+	.
+
+	double area(const Circle& w)
+	{
+		const double PI = 4*atan(1.0); //library function of arctangent
+		return pI*w.radius()*w.radius();
+	}
+
+2. When you make a modification to a program. When it is really big, compiling a new file when it is millions of code will take really long time.
+	C++ Conventions
+
+
+	Build process :
+	1. Suppose that 
+
+					myapp.cpp						db.cpp									net.cpp
+	source files:	we have the main routine.		implements the function f()				implements the function
+					int main()						void f()								void g();
+																							{
+																								sin(x)
+																							}
+													which uses the function g()				
+	
+	Object files:	myapp.obj
+					need:							need:									need:
+					f , cout, <<					g , cout , <							sin
+
+					defined:						define:									define:
+					main							f 										g
+
+
+	Linker:			Standart library --------> Gets combined with every other object into a single executable file.
+
+
+	it compiled into machine language codes, but where does f begins?
+	the machine lagunage says : at some point we have to call f.
+
+
+	everything that's needed had better be defined somewhere in the cpp files
+
+	if we built without one object, there wouldnt be an implementation of g
+	--> undefined symbol
+	--> unresolved symbol
+	--> no function can be 
+
+
+3. C++ allows function overloading:
+	What if i have 2 functions called f() >
+	--> illegal. we cannot implement this function because this is an deifned multiple times.
+
+4. The need: main routine requirement for the linker
+	if the object files are still here, you can compile in a smaller amount of time.
+	if we make a small change to f,
+	 then db.cpp is changed
+	 net.cpp is not change : myapp.cpp is not changed.
+	 there's no change in myapp.cpp nor net.cpp
+	 we only update the db.cpp because it is the only file that is out-of-date.
+
+	 linking is fast than compiling.
+
+	 we save:
+	 recompiling stuff that isn't changed.
+
+	 if we add a small change that changes 5 source files.
+	 These 5 files have changed: something takes care of it.
+	 The whole project mechanism is about.
+
+	 If you add files to the project, it says to the build system :
+	 Keep track of these fiels and save any object that it produces.
+	 We know what source files -- > We check each source files to see if it is out of date or not.
+
+	 Is this file more recently modified than these files? --- Yeah
+
+
+	 ex:			db.cpp is newer than db.o
+	 				db.o will be recompiled into the object
+
+	 				net.o is non-existent:
+	 				net.cpp will be recompiled.
+
+5. Typical errors.
+
+#include "Circle.cpp" NO!! Don't do this!!!
+#include <iostream>
+
+if we link .cpp files, it will define 
+
+myapp.cpp							blah.cpp
+Circle::circle 						defines
+Circle::scale()						Circle::circle() and Circle::scale()
+
+We SHOULD NOT include the implementations.
+Hence, we split these up into two pieces
+
+Hence, we make the header file just enough to let the compiler know, but not ACTUALLY implement it because we CAN ONLY implement a function once so that it does not repeat itself.
+
+
+Updated code with
+
+6. iostream
+
+its harmless to include iostream more than once in multiple files.
+
+i should not need to know
+
+if the code looks like it needs iostream, just put it!
+but dont include unnecessary stuff
+
+if Flatulan.h has no reason to include player.h dont include player.h
+
+because i am using circle, i need circle.h
+because i am using << . i need <iostream>
+
+7. <> versus ""
+	<> -- not specific to your app : already provided by the program
+	"" -- things you do yourself. 
+
+8. Java : every class is goign to be in its own class
+		--> containing both declaration and imlpementation.
+9. If within one source files, the compiler see declaration and another declaration of the same name, it will not be allowed.
+	ex:	class A{}
+		class A{}
+
+
+myapp.cpp
+=========
+
+
+//why should you repeat the class declaration and what member function it has.
+//if you have to write it there, and you have to write it here .. it is asking for trouble
+
+
+int main()
+{
+	Circle c(-2,5,7)
+	c.scale(2);
+	c.draw();
+	cout << area(c) << endl;
+
+	double z;
+	cin << z;
+	if (! c.scale(z))
+		... deal with the error ...
+	...
+}
+
+
+
+
+point.h
+=======
+
+class Point
+{
+	
+};
+
+Cirle.h
+=======
+class Circle
+{
+	.
+	.
+	,
+	private:
+		Point m_centre; //compiler doesnt know what it means
+		double m_r;
+}
+
+myapp.cpp
+=========
+
+#include "Point.h"
+#include "Circle.h"
+
+somebody wanting to use circle, you also need to include point
+
+
+int main()
+{
+	Circle c();
+	Point p(...);
+	// but a compilation error arises
+	//it will start by including circle.h
+	//having include #circle.h,we will already
+	WE CANNOT DECLARE THE SAME THINGS IN ONE SOURCE FILE
+
+
+	//within the same file, we cannot do
+	class A
+	{
+
+	};
+	class A
+	{
+
+	};
+
+	we see the declaration of point class twice in the same source file.
+
+
+
+
+
+}
+
+if i wanna use circle, i use a circle.h
+if i wanna use rectangle, i use rectangle.h
+
+====
+
+Within the file myapp.cpp, we effectively see that we are including the declaration twice.
+
+the first time we deal with point.h, we process the declaration.
+We want some kind of if-like thing
+
+How does the compiler keeps track of how many times we define a symbol.
+We can test whether a symbol is defined.
+
+
+
+#ifndef FRED
+#define FRED
+-- The first time 
+
+class Point
+{
+	
+};
+
+#endif 
+
+
+Circle.h //every single header file requires a different single 
+=======
+#ifndef FRED
+#define FRED -->You need to immediately know whether you're okay
+
+// The marker used to mark whether we visited point.h is also being used in Circle.h
+
+#endif
+
+
+All header files have different name
+
+revamped version
+Circle.h
+=======
+//incorporate the name of the filec into the name of the symbol used to check for repetition in the header checking
+
+
+#ifndef POINT_INCLUDED
+#define POINT_INCLUDED
+
+class Point{
+	
+
+};
+
+#endif 	// POINT_INCLUDED (THIS IS JUST A COMMENT, YOU DONT EVEN HAVE TO FIX WHAT YOU DECLARE.)
+Notes:
+1. The first time the point.h gets included, we will define the point included symbol and tell you what a point is.
+2. When we include circle.h, it will checked if have we defined the symbols yet?
+	Once it reaches point, it checks -- > Have i defined point yet ? -- > Yes.
+	Then the ifndef marks the "include guards" , skipping all the redefinition of the symbols
+
+	When we use the include guards
+	Everything reasonable is included within the include guards
+
+	The WHOLE HEADER FILE needs to 
+
+
+
+
+
+
+
+
+
+Student.h
+=========
+
+#ifndef STUDENT_INCLUDED
+#define STUDENT_INCLUDED
+
+#include "Course.h"
+
+class Student
+{...
+	Course* m_studylist[1000];
+};
+
+
+#endif // STUDENT_INCLUDED
+
+Course.h
+========
+
+#ifndef COURSE_INCLUDED
+#define COURSE_INCLUDED
+
+class Course
+{
+	Student* m_roster[1000]; //
+
+};
+
+
+What we have here is called a circular dependency.
+Student depends on knowing Course
+Course depends on knowing Students
+
+Have we defined the symbol student included, before we process the student implementation,
+it will check course, have we defined student?
+
+We never got to the point where we declare the 
+=====
+The solution is as follows:
+
+
+Valid declaration in C and C++
+
+Concept: Incomplete Type Declaration
+student Blah;
+class Blah;
+
+this is harmless: as long as there is no more than one complete declaration, this is fine
+
+Fine:
+class Blah;
+class Blah;
+class Blah;
+class Blah {......;}
+
+
+note:
+
+If all we need to know that course is a type, we just do this:
+
+class Course;
+class Stduent
+{
+	Course* m_studylist[10];
+
+}
+
+
+however, to do anything with course, we need to include "Course.h"
+in using pointers, we only need to know that Course is just a name;
+
+
+
+
+myregapp.cpp
+============
+
+#include "Student.h"
+int main()
+{
+	Student s(....);
+}
+
+
+
+
+
+===========================
+
+
+class Circle()
+{
+	public:
+		Circle(double x,double y,double r);
+		...
+	private:
+		double m_x;
+		...
+};
+
+
+class StickFigure
+{
+	public:
+		StickFigure(double bl, double headDiam,string nm,double hx,double hy);
+		...
+	private:
+		double m_bodyLength;
+		string m_name;
+		Circle m_head;
+
+};
+
+Circle::Circle(double x, double y, double r) : m_x(x), m_y(y), m_r(r)
+{
+	if (r<=0)
+	...
+}
+
+
+StickFigure::StickFigure(double bl, double headDiam, string nm, double hx, double hy)
+{	// WON'T COMPILE
+	//If i were to compile a stick figure object.
+	//stickFigure sf(5,4, "Fred", -2, 7);
+
+	m_bodylength = bl;
+	m_name = nm;
+	m_head = Circle(hx,hy,headDiam / 2);
+}
+
+Steps of construction:
+
+1.	-------
+2.	Construct the data members
+3.	Execute the body of the constructor
+
+
+for primitive datatype, it wont be initialized. (garbage value)
+for derived ones, it will use default constructors.
+
+how will the compiler know the three arguments do?
+
+you have to tell the compiler which:
+
+member initialization.
+
+how to fix
+
+StickFigure::SticjFigure(double bl.......) : m_head(hx,hy,headDiam/2) // why not just construct the body length here?
+default constuct the name 
+{
+	
+}
+
+If a class has datamembers of themselves taht have class object, if you dont in the initialization list , it will call the default constructor to build it.
+To solve it, use it in the member initializaiton list.
