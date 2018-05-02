@@ -1,0 +1,210 @@
+Pseudocode
+
+Sequence()
+...
+	set size of sequence to be 0
+	set head to null
+	set tail to null
+...
+
+bool insert(int pos, const ItemType& value)
+...
+
+	create a new Node with value 
+	create a pointer current to traverse the array
+	create a pointer to follow the current pointer
+
+	check if position is valid
+		if not valid,
+			delete the new node
+			break
+
+		valid
+			if empty sequence
+				set the newNode to be the first and last element
+			loop across the sequence until the probe points to null or at the end of the sequence
+
+			if probe is still at head, 
+				insert the new node at the front of the sequence
+
+			if we are inserting in between probe and before the probe
+				set the before's next to new Node
+				set the current's prev to new Node
+
+			if probe is at the end,
+				insert the new node at the end of the seqeunce
+
+			increment the size of seqeunce
+		...
+	...
+...
+				 
+ int insert(const ItemType& value)
+ ...
+
+ 	check emptiness
+ 		if empty, 
+ 			let the new node be the only element
+
+ 	repeatedly:
+ 		traverse the list to find the lowest value of p such that value is less than the current data
+ 		if found p,
+ 			if at the front,
+ 				let the new node be the first element
+ 			if at the back,
+ 				let the new node be the last element
+ 			if in between elements
+ 				set the before's next to new Node
+				set the current's prev to new Node
+	return the position in which it was inserted
+
+...
+
+bool erase(int pos)
+...
+	check if valid depending on size of sequence
+	if sequence is empty,
+		do nothing and return false
+
+	repeatedly,
+		move to the position
+		if probe is at first node,
+			unlink the second node to the first
+			move the head to the second node
+			delete the first node
+		if probe is at last node,
+			unlink the second last node to the last
+			move the tail to the second last node
+			delete the last node
+		if inbetween 
+			temporary pointer holds pos node
+			before the pos links to after pos
+			delete the temporary pointer
+		decrement size and return true
+	
+	return false if we cannot erase
+...
+
+int remove(const ItemType& value)
+...
+	create a counter to keep track of how many erases
+	repeatedly,
+		if we can find value in the sequence
+			Erase the value at the position returned by find
+		increment for each successful erase
+	return the counter 
+...
+
+bool Sequence::get(int pos, ItemType& value) const
+...
+	check if pos is within valid size ranges
+		if not,
+			false and return
+	set value to be the data at the position (using elementAtThePosition)
+	true and return
+...
+
+
+bool Sequence::set(int pos, const ItemType& value)
+...
+	check if pos is within valid size ranges
+		if not,
+			false and return
+	set value tat  the position to be the value (using elementAtThePosition)
+	true and return
+...
+
+void Sequence::swap(Sequence& other)
+...
+	create a temporary Nodes to hold the original sequence's head and tail
+	set the original head and tail with the other's head and tail
+	set the other's head and tail with the temporary nodes
+	switch the sizes of the original and other
+...
+
+int subsequence(const Sequence& seq1, const Sequence& seq2)
+...
+	repeatedly,
+		find first position such that element at position with the first element of seq2
+			repeatedly, 
+				iterate through both at the same time to ensure that they still match
+					if not
+						break and proceed with the next element of seq1
+				if same
+					return the position
+			...
+		...
+	if there is no matching seqeunce, return -1
+...
+
+void interleave(const Sequence& seq1, const Sequence& seq2, Sequence& result)
+
+...
+	create a temporary sequence to operate on
+	check sizes of seq1 and seq2
+		if any of them empty
+			temporary is the non-empty sequence
+		if both empty
+			temprary is empty
+		if size seq1 > size seq2
+			alternatively insert seq1 and seq2 until all seq2 inserted into the temporary
+			insert the remainder of seq1 into temporary
+		if size seq1 > size seq1
+			alternatively insert seq1 and seq2 until all seq1 inserted into the temporary
+			insert the remainder of seq2 into temporary
+		if sizes are the same,
+		alternatively insert seq1 and seq2 the temporary
+	swap the temporary and the result
+...
+
+void Sequence::copyList(const Sequence& otherList)
+
+...
+	clear the original sequence first if not empty
+	iterate through the nodes with a temp pointer and delete elements at temp
+
+	check size otherList
+		if otherList is empty,
+			sequence should be set to empty
+		if not,
+			repeatedly,
+
+					create a new node to copy the values at the current pointer
+					link the new node created to the previous node
+					move the current pointer forward
+				...
+			...
+
+...
+
+...
+    }
+    else
+    {
+        current = otherList.head; //current points to the
+        //list to be copied
+        m_size = otherList.m_size;
+        //copy the first node
+        head = new Node; //create the node
+        head->data = current->data; //copy the info
+        head->next = nullptr; //set the link field of
+        //the node to nullptr
+        tail = head; //make last point to the
+        //first node
+        current = current->next; //make current point
+        //copy the remaining list
+        while (current != nullptr)
+        {
+            newNode = new Node; //create a node
+            newNode->data = current->data; //copy the info
+            newNode->next = nullptr; //set the link of
+            //newNode to nullptr
+            tail->next = newNode; //attach newNode after last
+            tail = newNode; //make last point to
+            //the actual last node
+            current = current->next; //make current point
+            //to the next node
+        }//end while
+    }//end else
+}//end copyList
+

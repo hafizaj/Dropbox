@@ -1,0 +1,242 @@
+CS32 Discussion 1H class 1
+
+Debugging Tools Intro:
+
+Step Over : Go to the line of code directly belowthis
+Step Into : Go to the exact next line to be executed.
+Step Out  : execute the rest of this function and take me to the next line to be executed just after it
+
+const int ARR_SIZE = 10;
+void printArr(const int arr[]) {
+	
+}
+
+int one = arr[0];
+arr++; // legal
+arr[0]++; // illegal
+
+
+Difference:
+class A 
+{
+	void printArr() const // indicates the function will not change any private variables
+	{
+	...
+	}
+}
+
+while void printArr(const int arr[])  indicates thatit will not change the array that is passed.
+
+we are not allowed to call
+
+
+CONST Function can only call const functions
+--	Because it guarantees that we will not change the private member functions.
+
+const int* second = &array[1]; --> this is pointing to the address of the second element of the array
+
+All your code that you submit
+=============================
+
+Before your function you aren't sure what it does, you need to write comment for it:
+
+//print each element of the array one line at a time
+//assume each arrya inputted is size ARR_SIZE
+void printArr(){}
+
+//	subtrach each element of the inputted array by 1
+//	assunes each array inputted is size ARR_SIZE
+void subOne(int arr[]);
+
+
+int main()
+{
+	//	makea size 10 array containing 0 thorugh 9
+	int arr[ARR_SIZE] = { 0,1,2,3,4,5,6,7,8,9};
+
+	// expect it to be 0 1 2 6 12 20 6 7 8 9
+	multByNMinusOne(3,6,arr);
+	printArr(arr);
+}
+
+Initialization List
+===================
+You need to make an initialization list when you don't have a default constructo
+
+class No{
+	public:
+		No(int j) {}
+	private:
+		,,,
+}
+
+class Yes{
+	public:	
+		Yes() : No(rand()) {} // we have to put in an initialization list when it requires a variable
+		All the private member variables will be initialized with their default consturctor.
+}
+
+Order of consturction
+1.	Arguments of the constructor
+	int main()
+	{
+		No n1(10); the first thing that is going to be constructed is the int j
+	}
+2.	Anything in the initialization list.
+3.	Body of the constructor
+	Any base class will write their constructor first.
+
+
+class A
+{
+	public:
+		A()	{
+			cout << "A constructor" << endl;
+		}
+		~A()
+		{
+			cout << "A destructed" << endl;
+		}
+
+};
+=======
+class B
+{
+public:
+	B()
+	{
+		cout << "B constructed" << endl;
+	}
+	~B()
+	{
+		cout << "B destructed" << endl;
+	}
+private:
+	A a_array[3];
+	C c;
+};
+=======
+class C
+{
+public:
+	C(){
+		a = new A;
+		cout << "C constructed " << endl;
+
+	}
+	~C(){
+		delete a;
+		cout << "C destructed" << endl;
+	}
+private:
+	A* a; //initializes a garbage value, doesn't print A
+};
+
+int main()
+{
+	C c;
+	B b;
+
+}
+
+output:
+A constucted
+C constructed
+A constucted
+A constucted
+A constucted
+A constucted
+C constructed 
+B constructed
+
+============
+The order of destruction are literally just the opposite of consturction.
+Destruct them from top to bottom
+B destructed
+C destructed 
+A destructed
+A destructed
+A destructed
+A destructed
+C destructed
+A destructed
+
+=========
+How to read specifications
+=========
+
+using ItemType = int ;
+is going to represent integer
+change this from integer instead of string
+We're going to change into int value instead of ItemType
+
+The original item at position p and those that follow it end up at positions one higher than before.
+when were inserting at position 1, everything at that and higher than that .
+
+
+Implement the swap function:
+
+Change the implementation of the swap function
+Don't iterate to all of these.
+Making a temporary pointert
+
+Temporary pointers get deleted at the end of the function.
+
+Seq* temp = a;
+a = b ;
+b = t;
+
+
+class Freddy{
+	public:
+		//we want to allocate an input of size 
+		Freddy(int numKilled)
+		{
+			peopleKilled = new Person[nk]; // this is going to allocate a memory of size nk.
+			//people killed is going to point to an array
+		}
+
+
+	private:
+		Person* peopleKilled;
+		int num;
+};
+
+class Jason{
+	public:
+		Jason(int nk)
+		{
+			peopleKilled = new Person[nk];
+		}
+
+	private:
+		Person* peopleKilled;
+		int num;
+	
+
+};
+
+We want to make a copy of a freddy and a copy of Jason and have them say
+
+
+default copy~constructor
+
+
+Example:
+	Jasom(const Jason& j); //each private member variable of new image is the private member varaible of j
+	{
+		pplKilled = j.pplKilled; // the problem is that this points to the exact same memory as the object that is copied from
+	}
+	To fix this
+
+	Jason(const Jason& j); 
+	{
+		pplKilled = new Person[j.num];
+		for(int i=0;i < j.num; i++) //for loop to plug in the values it copied
+		{
+			pplKilled[i] = j.pplKilled[i];
+		}
+		num = j.num;
+	}
+
+its only a problem when it allocates memory.

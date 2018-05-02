@@ -1,0 +1,264 @@
+CS Lecture 8 (Inheritance)
+//	using public Class_name
+=====================================
+=====================================
+ class Shape
+{
+	void move(double xnew,double ynew);
+	virtual void draw() const ;
+	double m_x;			//	supplmentary coordinates help to define the shape even further
+	double m_y;			//	absolute shape that is true for all shapes
+
+};
+
+class Circle : public Shape 		//		a circle is a kind of shape
+{
+	virutal void draw() const;
+	double m_r;
+};
+
+class Rectangle : public Shape 		//		a rectangle is a kind of shape
+{
+	virtual void draw() const;
+	virtual double diag() const;
+	double m_dx;
+	double m_dy;
+};
+
+Shape* pic[100];
+
+
+void f(Shape& x)		// take in any kind of shape and pass in a mammal 
+{
+	x.move(....	....);
+	x.draw();
+}
+
+=====================================
+=====================================
+if x is known to be a shape of some kind ,you can move it and draw it.
+nothing says that all shapes can be drawn
+
+we have a move and draw function is both in rectangle and circle
+but we have no assurance that all shapes can be drawn and moved.
+we have to announce that all shapes can be moved and be drawn.
+we make that advertisement in sh
+
+if we decide that the coordinate determines the shape and location of the shape.
+Theres an absolute x and y coordinate that determines the shaope and everything else supplements the shape by reference to that point
+
+Q.	How is a circle represented?
+Implication that circle derives from shape.
+Shape is a base class.
+Circle is a derived class.
+Every derived object has embedded within it a base object.
+Every circle object will someone inside it have a shape object.
+
+
+A pointer to a circle object and store it into an array of shape pointers.
+
+Shape* pic[n];
+pic[0] = new Circle(...);	//	This creates a circle pointer in the heap
+//	This creates a pointer to a circle object
+//	But we cant store a pointer of circle --> array if shape pointers.
+//	compiler converts 
+but pic was declared to be an array of pointer of shapes.
+i can take a pointer to a circle and assign it to an array of shape pointer.
+C++ , Java, Swift allows the conversion of derived classes to base classes.
+
+What happens:
+
+Generate a pointer to the shape part of the circle pointer and stores it in the array
+I got a pointer to a rectangle, and wants to store in a array of shape pointer
+It transforms into the shape part of the rectangle and stores it in the array.
+
+pic holds the shape part of derived classes.
+============================	================================	==================================
+
+Circle(c);
+f(c);
+
+For the duration of the function, f will use the shape part of circle c.
+
+
+Visit each shape pointer to the collection
+For each pointer, draw each shape.
+
+pseudocode
+while there is shape
+	....
+	draw the shapes
+....
+
+void f(Shape& x)
+{
+	x.move();
+	x.draw();
+}
+
+//	Implementing shapesmovefunction
+
+vodi Shape::move(double xnew,double ynew)
+{
+	m_x = xnew;
+	m_y = ynew;
+}
+
+Works through the concept of inheritance
+Derived classes inherit all the stuff declared in the base class.
+
+class Circle : public Shape 		//		Circle inherits both private datamembers of Shape and the move function 
+{
+	void move(double xnew,double ynew);
+	double m_r;
+};
+
+Circle doensn't declare a move function
+A circle is a kind of shape
+void Shape::move will be inherited by Circle.
+
+function takes a shape reference
+
+=====================================
+=====================================
+Drawing a circle
+=====================================
+=====================================
+Tell me how to draw a circle
+Tell me how to draw a rectangle
+
+void Shape::draw()
+{
+	...	draw a cloud centered at (m_x,m_y);
+}
+
+void Circle::draw()
+{
+	...	draw a circle of radius m_r centered at (m_x,m_y);
+}
+void Rectangle::draw()
+{
+	...	draw a rectangle with upper left corner (m_x,m_y) centered at (m_x,m_y);
+}
+
+If the compiler has t odecide which draw function to call at compile time, it can ONLY call the Shape::draw function
+Hence it will draw a cloud cented at (m_x,m_y);
+It is inappropriate to call circle or rectangle's draw function as we do not know at compile time which shape is going to be passed in.
+
+We have to make a choice between 
+-->	static binding 		(the implementation to call is decided at compile time)
+	-	we only know the shape::draw function at compile time
+	-	will draw only cloud for ALL object passed in
+-->	dynamic binding 	(the implementation to call is decided at runtime, based on the actual kind of object)
+
+in C++, not saying that we want dynamic binding, compiler will use static binding.
+hence, we have to turn the binding method to be dynamic;
+
+ class Shape
+{
+	...
+	virtual void draw() const ;
+	...
+
+};
+
+saying virtual causes any function to be evaluated during runtime
+we don't have to mention in derived classes that the function is virtual
+but we can mention the derived function is virtual
+
+class Circle : public Shape 
+{
+	virtual void draw() const;
+	double m_r;
+};
+
+virtual,dynamic binding 	"call the appropriate implementation based on the actual kind of object"
+
+=====================================
+=====================================
+
+The only time we only get a cloud is when we actually have a shape.
+ class Shape
+{virtual void draw() const ;);
+
+overriding "Shape::draw()"
+but we didn't override Shape::move();
+
+//	by having virtual, we provide the default option for derived classes to use the defined function is the base class.
+
+
+class WarningSymbol : public Shape
+{
+	void move(double xnew,double ynew);
+	...
+};
+
+void WarningSymbol::move(double xnew,double ynew)
+{
+	Shape::move(xnew,ynew);	//calling shape's move function (calling the base function with those coordinates)		(in java Super.move())
+	...	flash 3 times.
+
+}
+
+//	We didn;t declare the base class virtual
+WarningSymbol ws;
+ws.move(....);
+
+Hence this will not flash 3 times because...
+since move was not declared virtual
+it will only use Shape's base function
+if we attempt to override a member function without declaring the base function to be virtual, it will not work properly.
+
+Moral of the story:	Never attempt to override a non-virtual function.
+					Always declare virtual in the base class.
+When we decide that a function in the base class is non-virtual, we assume that function will never be different for any derived classes.
+All people who uses our library will have to rebuild and thus this may be costly.
+
+
+Compiler will warn us that "we are attempting to override a non-virtual function".
+Fixing this:
+class Circle : public Shape 
+{
+	virtual void draw() const;
+	virtual void move(double xnew,double ynew);
+	double m_r;
+};
+when the compiler compiles f, see that we move on x.
+we gotta use the move function of shape
+but we didn;t see the virtual
+hence, it will only call the 
+
+=====================================
+=====================================
+Polymorphism
+=====================================
+=====================================
+If a class is designed as the base class,
+we make that class have generally everything is virtual.
+
+Note: There is a cost to virtual functions
+Hence that cost must be reduced in order to maximise efficiency.
+
+double rectangle::diag() const
+{
+	return sqrt(m_dx*m_dx + m_y*m_y)
+}
+//Why is rectangle virtual?
+//	What is we wanted to implement the square
+//	Square is a kind of rectangle
+//	even more derived versions of rectangle
+double Square::diag() const
+{
+	return sqrt(2)*m_dx;	//much more efficient than square rooting all
+}
+
+Shape* sp
+if	(...)
+	sp = new Rectangle(...);
+else
+	sp = new Shape(...);
+...
+sp->draw();
+
+
+

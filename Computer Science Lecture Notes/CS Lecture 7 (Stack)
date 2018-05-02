@@ -1,0 +1,132 @@
+Lecture 7 (Stacks and Queues)
+
+Stack
+=====
+Also known as LIFO (Last In, First Out) Data Structure
+
+Cascading prediction-based abilities.
+
+
+Stack Operations:
+
+	Create a new, empty stack
+	Push (an item onto the top of the stack)
+	Pop  (remove the top item on top of the stack)
+	Look at the top item without removing it
+	Check to see if the stack is empty
+
+
+Optional Operations:
+
+	How many items are in the stack?
+	Look at any item in the stack
+
+Requirements:
+In order to call this the stack, you cant have any operations that add items anywhere other than the end.
+
+Analogy:
+Putting an item onto the stack pushes it down and removing it pushes it back up.
+We are not allowed to put an item at the middle of the stack.
+We can only operate on the topmost item in the stack
+
+
+We can't do with the stack if
+1	Cant remove the top item of the stack if the stack is empty
+2	Cant really look at the top item if the stack is empty
+Hence, we need the isEmpty function.
+
+How to implement the stack
+
+#include <stack>
+using namespace std;
+
+//what kind of things the stack will hold syntax
+stack<int> s; //this is going to be a stack of ints
+s.push(10);
+s.push(20);
+
+
+// C++ built in stack datatype
+
+Pop remove the items on top of the stack
+	The built in function of C++ doesnt not return the value of the element we popped off from the stack.
+
+What happens when you try to pop the empty stack
+What happens when you try to look at the top of an empty stack
+	The C++ built in results in undefined behaviour
+
+Make sure when we use the C++ stack we never try to access individual
+
+
+//	Conceptual Stuff
+It is not a fundamental data structure as we can implement stack using both arrays and linked-lists.
+
+
+
+Queues 
+AKA FIFO Data Structure (First In First Out)
+======
+
+The fairest policy is first come first serve policy. 
+The person who's there for longest gets served first.
+All the insert remove item from the queue
+
+Queue Operations:
+	Create an empty queue
+	Enqueue an item into the queue
+	Dequeue an item from the queue
+
+
+
+
+Warnings:
+
+	Expect undefined behaviour when queue is empty
+
+
+#include <queue>
+using namespace stdl
+queue<int> q;
+q.push(10);
+q.push(20);
+int n = q.front();
+q.pop;
+if (q!em)
+
+
+name = "SMITH" and ( salary > 70000 or dept "IT")
+Prefix:
+The prefix never needs parenthesis with no rules of precedence needed
+f(x,y,z):
+
+add(....1);
+add(sub(8, div(6,2)),1)
++ - 8 / 6 2 1
+What it means:
+divide 6 by 2
+subtract 8 with 6/2
+plus 8 -6/2 with 1
+operator is followed by its operand
+
+Infix:
+8-6/2+1
+
+Postfix Notatation:
+Operator comes after operand
+
+8 6 2 / - 1 +
+
+/ comes after 6 and 2, hence means that 6 divided by 2
+- comes after 8, and 6/2, hence means that 8 subtract with 6 /2
++ comes after 1, hence means that 8-(6/2) + 1
+
+Make use of the stack that makes use of the operands of goes through the postfix sequencwe left to right
+
+Here's the rules :
+1	When you come to an operand, push it on the Stack
+	8 -> 6 -> 2
+	Pop the top operand, pop the next operant, apply operation,
+	push it back into the stack
+
+	
+
